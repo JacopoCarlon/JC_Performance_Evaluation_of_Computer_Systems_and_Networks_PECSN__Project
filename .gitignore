@@ -1,0 +1,24 @@
+**/**.o
+**/**.d
+**/**.last-copts
+**/**.nedexclusions
+**/**.nedfolders
+**/**.oppbuildspec
+**/**.cproject
+**/**.project
+**/**.qtenvrc
+**/**.prefs
+
+**/out/**
+**/.vscode/**
+**/.settings/**
+
+**/stuff/**
+
+**/**_dbg.exe
+**/**.exe
+
+
+
+# for now ignore results :
+**/results/**

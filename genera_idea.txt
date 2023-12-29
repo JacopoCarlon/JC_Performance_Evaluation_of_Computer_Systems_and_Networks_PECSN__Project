@@ -1,0 +1,35 @@
+
+Spawner: generates jobs every tn times, can be distribution
+->  sends jobs to queue, FIFO
+
+Queue: infinite queue FIFO
+    if (arrive job from spawner){
+        queue.push(job)
+    }
+    if(queue_not_empty){
+        job = queue.pop()
+        if (both servers are free){
+            if(rnd()[0, 1] > p[0, 1]):
+                send(job, Server_A)
+            else 
+                send(job, Server_B)
+        }
+        else {
+            send(job, Server_that_is_free)
+        }
+    }
+
+Server_A, _B : add a delay, delay_B is always 2*delay_A, can be distribution
+    if(jobs_in_this_server != 0){
+        wait till time , 
+        send(job, sink)
+    }
+    else{
+        get job
+        jobs_in_this_server++
+        start waiting
+    }
+
+Sink : destroy job .
+
+
