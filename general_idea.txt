@@ -33,3 +33,6 @@ Server_A, _B : add a delay, delay_B is always 2*delay_A, can be distribution
 Sink : destroy job .
 
 
+improved : no need for sink
+
+
