@@ -13,21 +13,20 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-package j_p11_1q2s;
+#include "Sink.h"
+#include "Job_m.h"
 
+Define_Module(Sink);
 
-simple Server
+void Sink::initialize()
 {
-    parameters:
+    recvJobSignal_ = registerSignal("recvJobSignal");
+}
 
-        @signal[recvJobSignal];
-        @statistic[recvJob](source="recvJobSignal"; record=sum,vector);
-
-        @signal[completedJobSignal];
-        @statistic[completedJob](source="completedJobSignal"; record=sum,vector);
-        
-    gates: 
-        input jobIn;
-        output msgDone;
-        output jobOut;
+void Sink::handleMessage(cMessage *msg)
+{
+    EV << "Received job from the server" << endl;
+    emit(recvJobSignal_,1);
+    Job* jobToKill = check_and_cast<Job*>(msg);
+    delete jobToKill;
 }

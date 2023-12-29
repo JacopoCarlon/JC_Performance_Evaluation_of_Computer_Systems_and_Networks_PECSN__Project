@@ -54,16 +54,16 @@ void Queuer::handleMessage(cMessage *msg)
 
         cGate *arrivalGate = msg->getArrivalGate();
 
-        Job* job = check_and_cast<Job*>(msg);
         
+        Job* job = check_and_cast<Job*>(msg);
         if(arrivalGate == gate("jobIn")){
             // message from spawner
             // PUSH it in queue
             // (it will also try pop)
             handleArrivedJob(job);
         }else{
-            //  //  if (gateSize("ctrlIn")>0){
-            // message from server
+            // CONTROL message from server
+            // we must kill it
             int src_gate = arrivalGate->getIndex();
             // if src_gate == 0, comes from server_0, means cg was |= 1
             // if src_gate == 1, comes from server_1, means cg was |= 2
@@ -73,7 +73,7 @@ void Queuer::handleMessage(cMessage *msg)
             // i want the AND to be true
 
             // KILL JOB
-            delete msg;
+            delete job;
 
             EV << "num occupied_servers_ :"<< occupied_servers_ << endl;
             EV << "server_who_sent_IMFREE :"<< src_gate << endl;
@@ -93,7 +93,6 @@ void Queuer::handleMessage(cMessage *msg)
             if( !sent_something && jobsQueue_.getLength()){
                 throw cRuntimeError("Q.handleMessage - did not pop after freed_msg from server: %i", src_gate);
             }
-            //  //  }
         }
     }
     return;
@@ -162,11 +161,9 @@ bool Queuer::trySendJobFromQueue(){
         // occupied_servers_ == 1 or 2
         // server_0 has the bit 0, and is sole occupied on 1
         // server_1 has the bit 1, and is sole occupied on 2
-        int currently_occupied_gate = occupied_servers_ -1 ;
-
+        //  int currently_occupied_gate = occupied_servers_ -1 ;
         // 1^3=2 ; 2^3=1
         int bit_to_send_to = occupied_servers_ ^ 0x03;
-
         // send to 0 or 1
         int gate_to_send_to = bit_to_send_to -1;
 

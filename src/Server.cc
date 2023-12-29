@@ -19,8 +19,21 @@
 Define_Module(Server);
 // this is a single-job single-thread server.
 
+//  Server::Server()
+//      : signalDone_(nullptr)
+//  {}
+//  
+//  Server::~Server()
+//  {
+//      cancelAndDelete(signalDone_);
+//  }
+
+
+
 void Server::initialize()
 {
+    //  signalDone_ = new cMessage("jobDone");
+
     //  servTimer_ = new cMessage("serviceDoneTimer");
     recvJobSignal_ = registerSignal("recvJobSignal");
     completedJobSignal_ = registerSignal("completedJobSignal");
@@ -36,8 +49,12 @@ void Server::handleMessage(cMessage *msg)
         //  handleCompleteJob( msg );
         EV << "Completed job in server" << endl;
         emit(completedJobSignal_,1);
+        // send job to sink to die
+        send(job, "jobOut");
 
-        send(job, "msgDone");
+        // send a signal to the Queuer that we are now free !
+        Job* ctrlj = new Job("jobCompleted");
+        send(ctrlj, "msgDone");
     } 
     else {
         // just received the job

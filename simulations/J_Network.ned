@@ -17,13 +17,14 @@ package j_p11_1q2s.simulations;
 
 import j_p11_1q2s.Queuer;
 import j_p11_1q2s.Server;
+import j_p11_1q2s.Sink;
 import j_p11_1q2s.Spawner;
 import ned.IdealChannel;
 
 
 network J_Network
 {
-    @display("bgb=640,640");
+    @display("bgb=640,384");
     submodules:
         spawner: Spawner {
             @display("p=128,128");
@@ -37,10 +38,21 @@ network J_Network
         server_1: Server {
             @display("p=384,256");
         }
+        sink_0: Sink {
+            @display("p=512,128");
+        }
+        sink_1: Sink {
+            @display("p=512,256");
+        }
     connections:
         spawner.jobOut --> IdealChannel --> queuer.jobIn;
+
         queuer.jobOut++ --> IdealChannel --> server_0.jobIn;
         queuer.jobOut++ --> IdealChannel --> server_1.jobIn;
+
         server_0.msgDone --> IdealChannel --> queuer.ctrlIn++;
         server_1.msgDone --> IdealChannel --> queuer.ctrlIn++;
+        
+        server_1.jobOut --> IdealChannel --> sink_1.jobIn;
+        server_0.jobOut --> IdealChannel --> sink_0.jobIn;
 }

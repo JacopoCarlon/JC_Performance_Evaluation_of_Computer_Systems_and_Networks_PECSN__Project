@@ -16,18 +16,14 @@
 package j_p11_1q2s;
 
 
-simple Server
+simple Sink
 {
     parameters:
 
         @signal[recvJobSignal];
         @statistic[recvJob](source="recvJobSignal"; record=sum,vector);
-
-        @signal[completedJobSignal];
-        @statistic[completedJob](source="completedJobSignal"; record=sum,vector);
         
     gates: 
         input jobIn;
-        output msgDone;
-        output jobOut;
+    
 }

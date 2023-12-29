@@ -13,21 +13,21 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-package j_p11_1q2s;
+#ifndef __J_P11_1Q2S_SINK_H_
+#define __J_P11_1Q2S_SINK_H_
+
+#include <omnetpp.h>
+
+using namespace omnetpp;
 
 
-simple Server
+class Sink : public cSimpleModule
 {
-    parameters:
+    simsignal_t recvJobSignal_;
 
-        @signal[recvJobSignal];
-        @statistic[recvJob](source="recvJobSignal"; record=sum,vector);
+  protected:
+    virtual void initialize() override;
+    virtual void handleMessage(cMessage *msg) override;
+};
 
-        @signal[completedJobSignal];
-        @statistic[completedJob](source="completedJobSignal"; record=sum,vector);
-        
-    gates: 
-        input jobIn;
-        output msgDone;
-        output jobOut;
-}
+#endif

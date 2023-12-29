@@ -20,20 +20,22 @@
 
 using namespace omnetpp;
 
-/**
- * TODO - Generated class
- */
+
 class Server : public cSimpleModule
 {
+    //  cMessage* signalDone_;
 
-  simsignal_t recvJobSignal_;
-  simsignal_t completedJobSignal_;
+    simsignal_t recvJobSignal_;
+    simsignal_t completedJobSignal_;
+
+  public:
+    //  Server();
+    //  ~Server();
 
   protected:
     virtual void initialize();
     virtual void handleMessage(cMessage* msg);
 
-    //  bool handleCompleteJob(cMessage* msg);
 };
 
 #endif
