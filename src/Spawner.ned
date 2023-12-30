@@ -19,10 +19,10 @@ package j_p11_1q2s;
 simple Spawner
 {
     parameters:
-        volatile double tn @unit(s) = default(1min);
-        volatile double tqi @unit(s) = default(1min);
-        volatile double tqosi @unit(s) = default(1min);
-        volatile double tso @unit(s) = default(1min);
+        volatile double tn @unit(s) = default(1min);        // rv time for creation
+        volatile double tqi @unit(s) = default(0min);       // time needed to enter queue = 0
+        volatile double tqosi @unit(s) = default(0min);     // time movement outQueue inServer = 0
+        volatile double tso @unit(s) = default(1min);       // time needed for service
 
         //  double maxGenerationTime @unit(s) = default(3s);
         //  double vMax = default(100);

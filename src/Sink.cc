@@ -16,6 +16,8 @@
 #include "Sink.h"
 #include "Job_m.h"
 
+// namespace j_net {
+
 Define_Module(Sink);
 
 void Sink::initialize()
@@ -25,8 +27,14 @@ void Sink::initialize()
 
 void Sink::handleMessage(cMessage *msg)
 {
+    // type is jobOutServerToSink
     EV << "Received job from the server" << endl;
     emit(recvJobSignal_,1);
     Job* jobToKill = check_and_cast<Job*>(msg);
     delete jobToKill;
 }
+
+
+
+
+// } /* j_namespace */

@@ -13,9 +13,10 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-#include <omnetpp.h>
-#include "Job_m.h"
+
 #include "Spawner.h"
+
+// namespace j_net {
 
 Define_Module(Spawner);
 
@@ -58,7 +59,9 @@ void Spawner::handleMessage(cMessage *msg)
 
 void Spawner::handleNewSpawn()
 {
-    Job* newJob = new Job("job");
+    // job begins as a jobWaitOutSpawner, 
+    // but the RV is taken from tn so it is not needed
+    Job* newJob = new Job("job", jobOutSpawnerToQueue);
     newJob->setTqi(par("tqi"));
     newJob->setTqosi(par("tqosi"));
     newJob->setTso(par("tso"));
@@ -74,5 +77,5 @@ void Spawner::handleNewSpawn()
 
 
 
-
+// } /* j_namespace */
 

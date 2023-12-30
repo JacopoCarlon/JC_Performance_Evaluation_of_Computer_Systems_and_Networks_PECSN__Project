@@ -18,7 +18,7 @@
 
 class Job;
 /**
- * Class generated from <tt>Job.msg:26</tt> by opp_msgtool.
+ * Class generated from <tt>Job.msg:35</tt> by opp_msgtool.
  * <pre>
  * message Job
  * {

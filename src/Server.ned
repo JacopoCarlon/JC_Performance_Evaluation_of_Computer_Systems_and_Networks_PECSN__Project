@@ -19,7 +19,9 @@ package j_p11_1q2s;
 simple Server
 {
     parameters:
-
+        
+        int slowness_multiplier = default(1);
+        
         @signal[recvJobSignal];
         @statistic[recvJob](source="recvJobSignal"; record=sum,vector);
 

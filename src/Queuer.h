@@ -18,8 +18,11 @@
 
 #include <omnetpp.h>
 #include "Job_m.h"
+#include "common.h"
 
 using namespace omnetpp;
+
+// namespace j_net {
 
 class Queuer : public cSimpleModule
 {
@@ -46,7 +49,10 @@ class Queuer : public cSimpleModule
     virtual void handleMessage(cMessage* msg);
     void handleArrivedJob(Job* job);
     bool trySendJobFromQueue();
-
+    void handleSendJobToServer(Job*job);
 };
+
+
+// } /* j_namespace */
 
 #endif

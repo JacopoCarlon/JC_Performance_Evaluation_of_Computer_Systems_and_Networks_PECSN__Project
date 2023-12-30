@@ -13,12 +13,21 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-// tqi : time_enter_queue		// rv ingresso queue
 // tqo : time_leave_queue 
 // tsi : time_enter_server
-// tso : time_leave_server		// rv servizio in server
-//
 // tqo : == tsi
+
+
+// tn  : time to create job     // RV creation time
+
+// tqi : time_enter_queue		// time-out time before entering queue : 0
+
+// time_queue is occupied to send out one before sending out others 
+// tqosi : elaboration time in queue before sending : 0
+
+// time required to service the job in the server
+// tso : time_leave_server		// RV servizio in server
+//
 //
 
 //  namespace network;
@@ -26,7 +35,7 @@
 message Job {
 	//	double v;
 
-	simtime_t tqi;   
+	simtime_t tqi;   	
 	simtime_t tqosi;
 	simtime_t tso;
 };

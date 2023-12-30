@@ -17,9 +17,12 @@
 #define __J_P11_1Q2S_SERVER_H_
 
 #include <omnetpp.h>
+#include "common.h"
+#include "Job_m.h"
 
 using namespace omnetpp;
 
+// namespace j_net {
 
 class Server : public cSimpleModule
 {
@@ -37,5 +40,7 @@ class Server : public cSimpleModule
     virtual void handleMessage(cMessage* msg);
 
 };
+
+// } /* j_namespace */
 
 #endif

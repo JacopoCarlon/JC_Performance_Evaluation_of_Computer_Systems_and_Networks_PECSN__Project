@@ -16,6 +16,8 @@
 #include "Server.h"
 #include "Job_m.h"
 
+// namespace j_net {
+
 Define_Module(Server);
 // this is a single-job single-thread server.
 
@@ -45,44 +47,51 @@ void Server::handleMessage(cMessage *msg)
     // server receives a job, 
     // and after some time it completes it and asks for a new job
     if(msg->isSelfMessage()){
-        // it's the timer to finish the job
-        //  handleCompleteJob( msg );
-        EV << "Completed job in server" << endl;
-        emit(completedJobSignal_,1);
-        // send job to sink to die
-        send(job, "jobOut");
+        if(job->getKind() == jobWaitOutServer){
+            // it's the timer to finish the job
+            //  handleCompleteJob( msg );
+            //  EV << "SRV Completed job in server" << endl;
+            emit(completedJobSignal_,1);
+            // send job to SINK to die
+            job->setKind(jobOutServerToSink);
+            send(job, "jobOut");
 
-        // send a signal to the Queuer that we are now free !
-        Job* ctrlj = new Job("jobCompleted");
-        send(ctrlj, "msgDone");
+            // send a signal to the Queuer that we are now free !
+            Job* ctrlj = new Job("jobCompleted", controlMessage);
+            send(ctrlj, "msgDone");
+            return;
+        }
+        return;
     } 
     else {
         // just received the job
         //  the queue is aware that the server is now occupied, 
         //  and will not send more jobs till we say we are free
-        EV << "Received job from the Queuer" << endl;
-        emit(recvJobSignal_,1);
+        if(job->getKind() == jobOutQueueToServer){
+            EV << "SRV Received job from the Queuer" << endl;
+            emit(recvJobSignal_,1);
 
-        // prepare RV SERVICE TIME
-        simtime_t time_service = job->getTso();
-        scheduleAt(simTime() + time_service, msg);
-        //  delete msg; 
-        //  scheduleAt(simTime() + serTim, servTimer_);
+            job->setKind(jobWaitOutServer);
 
+            // prepare RV SERVICE TIME
+            simtime_t time_service = job->getTso();
+
+            int slowerness = par("slowness_multiplier");
+            if(slowerness > 1){
+                time_service = time_service*slowerness;
+            }
+            scheduleAt(simTime() + time_service, msg);
+            //  delete msg; 
+            //  scheduleAt(simTime() + serTim, servTimer_);
+            return;
+        }
+        return;
     }
 
 }
 
 
-
-
-
-
-
-
-
-
-
+// } /* j_namespace */
 
 
 

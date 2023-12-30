@@ -17,8 +17,12 @@
 #define __J_P11_1Q2S_SPAWNER_H_
 
 #include <omnetpp.h>
+#include "common.h"
+#include "Job_m.h"
 
 using namespace omnetpp;
+
+// namespace j_net {
 
 class Spawner : public cSimpleModule
 {
@@ -38,6 +42,6 @@ class Spawner : public cSimpleModule
     void handleNewSpawn();
 };
 
-// namespace
+// } /* j_namespace */
 
 #endif

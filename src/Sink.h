@@ -17,9 +17,12 @@
 #define __J_P11_1Q2S_SINK_H_
 
 #include <omnetpp.h>
+#include "common.h"
+#include "Job_m.h"
 
 using namespace omnetpp;
 
+// namespace j_net {
 
 class Sink : public cSimpleModule
 {
@@ -29,5 +32,7 @@ class Sink : public cSimpleModule
     virtual void initialize() override;
     virtual void handleMessage(cMessage *msg) override;
 };
+
+// } /* j_namespace */
 
 #endif
