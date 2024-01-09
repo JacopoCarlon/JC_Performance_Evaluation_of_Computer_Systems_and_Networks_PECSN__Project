@@ -22,11 +22,11 @@ simple Server
         
         int slowness_multiplier = default(1);
         
-        @signal[recvJobSignal];
-        @statistic[recvJob](source="recvJobSignal"; record=sum,vector);
+        //  @signal[recvJobSignal];
+        //  @statistic[recvJob](source="recvJobSignal"; record=sum,vector);
 
         @signal[completedJobSignal];
-        @statistic[completedJob](source="completedJobSignal"; record=sum,vector);
+        @statistic[completedJob](title="Time completion job"; source="completedJobSignal"; record=sum,vector);
         
     gates: 
         input jobIn;

@@ -21,15 +21,15 @@ simple Spawner
     parameters:
         volatile double tn @unit(s) = default(1min);        // rv time for creation
         volatile double tqi @unit(s) = default(0min);       // time needed to enter queue = 0
-        volatile double tqosi @unit(s) = default(0min);     // time movement outQueue inServer = 0
+        volatile double tqosi @unit(s) = default(0min);     // time elaboration in queue
         volatile double tso @unit(s) = default(1min);       // time needed for service
 
-        //  double maxGenerationTime @unit(s) = default(3s);
-        //  double vMax = default(100);
-        //  generate random value for assignment to Server_0 or Server_1, in range [0, vMax]
+        //  //  double maxGenerationTime @unit(s) = default(3s);
+        //  //  double vMax = default(100);
+        //  //  generate random value for assignment to Server_0 or Server_1, in range [0, vMax]
 
-        @signal[exited];
-        @statistic[planeExited](title="Job exiting at given time"; source="exited"; record=vector);
+        //  //  @signal[exited];
+        //  //  @statistic[jobExited](title="Job exiting at given time"; source="exited"; record=vector);
     
     gates:
         output jobOut;

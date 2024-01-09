@@ -23,17 +23,21 @@ simple Queuer
         int probVal = default(50);
         int probMax = default(100);
 
-        @signal[lqtime];
-        @statistic[jobsQueueTime](title="Time of the jobsing queue"; source="lqtime"; record=stats,vector);
+        // used
+        @signal[jqtime];
+        @statistic[inQueueTime](title="Time of the entering jobs queue"; source="jqtime"; record=stats,vector);
 
-		@signal[lqlen];
-        @statistic[jobsQueueLen](title="Length of the jobsing queue"; source="lqlen"; record=stats,timeavg,vector);
+        // used
+		@signal[jqlen];
+        @statistic[jobsQueueLen](title="Length of the jobs queue"; source="jqlen"; record=stats,timeavg,vector);
 
-		@signal[npark];
-        @statistic[numJobsParked](title="Number of planes in the parking area"; source="npark"; record=stats,timeavg,vector);
-
+        // used
         @signal[genTimeSignal];
         @statistic[genTime](source="genTimeSignal"; record=mean,vector);
+		
+        //  //  //  @signal[npark];
+        //  //  //  @statistic[numJobsParked](title="Number of planes in the parking area"; source="npark"; record=stats,timeavg,vector);
+
 
     gates: 
         input jobIn;

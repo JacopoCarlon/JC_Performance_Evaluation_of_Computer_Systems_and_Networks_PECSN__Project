@@ -1,0 +1,15 @@
+cd ../stea_PECSN/000_FOLDER_JacopoCarlon_PECSN_Project/JacopoCarlon_PECSN_Project/simulations/results/
+
+opp_scavetool export -F CSV-R -o _SCA.csv *.sca
+
+opp_scavetool export -F CSV-R -o _VEC.csv *.vec
+
+
+
+//  //  //  opp_scavetool export -F CSV-R -o VCI.csv *.vci
+
+
+
+
+folder names : 
+Warmup_E_General_W5_25to50_rep5

@@ -27,7 +27,7 @@ using namespace omnetpp;
 class Spawner : public cSimpleModule
 {
     cMessage* timer_;
-    simtime_t planeExitedSig_;
+    //  simtime_t jobExitedSig_;
 
     //  void scheduleNext(cMessage* timer);
 

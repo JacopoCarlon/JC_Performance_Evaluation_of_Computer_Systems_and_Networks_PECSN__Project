@@ -38,7 +38,9 @@ void Spawner::initialize()
     //  maxGenTime_ = par("maxGenerationTime");
 
     simtime_t tn = par("tn");
- 
+    //  jobExitedSig_ = registerSignal("exited");
+
+
     scheduleAt(simTime() + tn, timer_); 
     // -> after some time, sends a message which will be managed by handleMessage
 }
@@ -47,6 +49,8 @@ void Spawner::initialize()
 void Spawner::handleMessage(cMessage *msg)
 {
     if(msg->isSelfMessage()){
+        // here there could be a delay between spawning and entering queue <tqi>, 
+        // but we keep it zero .
         handleNewSpawn();
     }
     else{
@@ -62,14 +66,14 @@ void Spawner::handleNewSpawn()
     // job begins as a jobWaitOutSpawner, 
     // but the RV is taken from tn so it is not needed
     Job* newJob = new Job("job", jobOutSpawnerToQueue);
-    newJob->setTqi(par("tqi"));
-    newJob->setTqosi(par("tqosi"));
-    newJob->setTso(par("tso"));
+    newJob->setTqi(par("tqi"));         //  0
+    newJob->setTqosi(par("tqosi"));     //  0
+    newJob->setTso(par("tso"));         // exp or uni
     //  newJob->setSchedulingPriority(0);
 
     send(newJob, "jobOut");
 
-    simtime_t tn = par("tn");
+    simtime_t tn = par("tn");           // exp or uni
     scheduleAt(simTime() + tn, timer_);
 }
 

@@ -28,12 +28,14 @@ class Queuer : public cSimpleModule
 {
     cQueue jobsQueue_;
     
-    simsignal_t genTimeSignal_;
-    simtime_t lastSeen_;
 
-    simsignal_t jobsQueueTimeSig_ ;
-    simsignal_t jobsQueueLenSig_  ; 
-    simsignal_t numJobsParkedSig_ ;
+    simsignal_t inQueueTimeSig_ ;     // tempo di permanenza nella coda
+    simsignal_t jobsQueueLenSig_  ;   // lunghezza della coda
+    //  simsignal_t numJobsParkedSig_ ;
+
+    bool is_first;
+    simtime_t lastSeen_;              // tempo di arrivo dell'ultimo pacchetto
+    simsignal_t genTimeSignal_;       // tempo di interarrivo
 
     int pRange_;  // probability max value
     int pVal_;    // probability limes value, in range [0, pRange_]

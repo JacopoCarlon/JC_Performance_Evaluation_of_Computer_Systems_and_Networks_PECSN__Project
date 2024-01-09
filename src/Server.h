@@ -28,7 +28,7 @@ class Server : public cSimpleModule
 {
     //  cMessage* signalDone_;
 
-    simsignal_t recvJobSignal_;
+    //  simsignal_t recvJobSignal_;
     simsignal_t completedJobSignal_;
 
   public:

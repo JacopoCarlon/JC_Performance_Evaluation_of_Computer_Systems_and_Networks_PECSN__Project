@@ -22,28 +22,39 @@ Define_Module(Queuer);
 int max_servers = 2;
 int servers_bits = 0;
 
+
+
 void Queuer::initialize()
 {
-    jobsQueueTimeSig_   = registerSignal("lqtime");
-    jobsQueueLenSig_    = registerSignal("lqlen");
-    numJobsParkedSig_   = registerSignal("npark");
+    inQueueTimeSig_   = registerSignal("jqtime");
+    jobsQueueLenSig_    = registerSignal("jqlen");
+    genTimeSignal_    = registerSignal("genTimeSignal");
+    //  numJobsParkedSig_   = registerSignal("npark");
 
-    genTimeSignal_ = registerSignal("genTimeSignal");
     lastSeen_= 0;
+    is_first = true;
 
     for(int i = 0; i< max_servers; i++){
         servers_bits |= (1<<i);
     }
     // check if tValue parameter is defined for the parent module 
     occupied_servers_ = 0;
-    EV << "num occupied_servers_ :"<< occupied_servers_ << endl;
-    EV << "num max_servers :"<< max_servers << endl;        // should be 2
-    EV << "num servers_bits :"<< servers_bits << endl;      // should be 3
+    //  EV << "num occupied_servers_ :"<< occupied_servers_ << endl;
+    //  EV << "num max_servers :"<< max_servers << endl;        // should be 2
+    //  EV << "num servers_bits :"<< servers_bits << endl;      // should be 3
     
     pVal_ = par("probVal").intValue();
     pRange_ = par("probMax").intValue();
     
 }
+
+
+
+/*   
+//  https://stackoverflow.com/questions/61962790/is-it-possible-to-know-which-input-gate-triggered-the-handlemessage-method-of
+*/
+
+
 
 void Queuer::handleMessage(cMessage *msg)
 {
@@ -86,8 +97,8 @@ void Queuer::handleMessage(cMessage *msg)
                     // KILL JOB
                     delete job;
 
-                    EV << "CTRL num occupied_servers_ :"<< occupied_servers_ << endl;
-                    EV << "CTRL server_who_sent_IMFREE :"<< src_gate << endl;
+                    //  EV << "CTRL num occupied_servers_ :"<< occupied_servers_ << endl;
+                    //  EV << "CTRL server_who_sent_IMFREE :"<< src_gate << endl;
                     //  EV << "num bit_gate :"<< value_saved << endl;
                     // if server was already free, something bad happened
                     if ( !(occupied_servers_ & value_saved) ){
@@ -98,7 +109,7 @@ void Queuer::handleMessage(cMessage *msg)
                     // just do XOR with 1 or 2
                     occupied_servers_ ^= value_saved;
 
-                    EV << "CTRL num occupied_servers_ :"<< occupied_servers_ << endl;
+                    //  EV << "CTRL num occupied_servers_ :"<< occupied_servers_ << endl;
                     // try pop (should succeed)
                     bool try_send_something = trySendJobFromQueue();
                     if( !try_send_something && jobsQueue_.getLength()){
@@ -117,8 +128,18 @@ void Queuer::handleArrivedJob(Job* job) {
     job->setTimestamp();
     jobsQueue_.insert(job);
 
+    // get INTERARRIVAL times
+    if(is_first){
+        is_first = false;
+    }
+    else{
+        simtime_t delta = simTime() - lastSeen_;
+        emit(genTimeSignal_, jobsQueue_.getLength());
+    }   
+    lastSeen_ = simTime();
+
     emit(jobsQueueLenSig_, jobsQueue_.getLength());
-    EV << "QQQQQQLEN after job added is :"<< jobsQueue_.getLength() << endl;
+    //  EV << "QQQQQQLEN after job added is :"<< jobsQueue_.getLength() << endl;
 
     // CALL POP
     if(occupied_servers_ == servers_bits){
@@ -133,6 +154,7 @@ void Queuer::handleArrivedJob(Job* job) {
 }
 
 
+
 // try POP :
 bool Queuer::trySendJobFromQueue(){
     if(!jobsQueue_.getLength()){
@@ -142,17 +164,14 @@ bool Queuer::trySendJobFromQueue(){
     if(occupied_servers_ == servers_bits ){
         return false;
     }      
-    /*   
-    //  https://stackoverflow.com/questions/61962790/is-it-possible-to-know-which-input-gate-triggered-the-handlemessage-method-of
-    */
-    EV << "QLEN : QueueLen before POP is:" << jobsQueue_.getLength() << endl;
+    
+    //  EV << "QLEN : QueueLen before POP is:" << jobsQueue_.getLength() << endl;
     Job* job = check_and_cast<Job*>(jobsQueue_.pop());
     emit(jobsQueueLenSig_, jobsQueue_.getLength());
-
-    EV << "QLEN : QueueLen after POP is:" << jobsQueue_.getLength() << endl;
+    //  EV << "QLEN : QueueLen after POP is:" << jobsQueue_.getLength() << endl;
 
     simtime_t queue_time = simTime() - job->getTimestamp();
-    emit(jobsQueueTimeSig_, queue_time);
+    emit(inQueueTimeSig_, queue_time);
     
     job->setKind(jobWaitOutQueue);
 
@@ -164,43 +183,44 @@ bool Queuer::trySendJobFromQueue(){
 }
 
 
+
 void Queuer::handleSendJobToServer(Job*job){
     
     job->setKind(jobOutQueueToServer);
 
     if(occupied_servers_ == 0)
     {
-        EV << "RRRNG num occupied_servers_ before send:"<< occupied_servers_ << endl;
+        //  EV << "RRRNG num occupied_servers_ before send:"<< occupied_servers_ << endl;
 
         // entrambi gate liberi
         int this_rnd_val = uniform(0, pRange_);
         
         // this part is hardcoded for 2 servers for now
         if( this_rnd_val < pVal_ ){
-            EV << "RRRNG send to server_gate :"<< 0 << endl;
+            //  EV << "RRRNG send to server_gate :"<< 0 << endl;
             send(job, "jobOut", 0);
             // set server_0 occupied
             occupied_servers_ |= 0x01;
         } 
         else{
-            EV << "RRRNG send to server_gate :"<< 1 << endl;
+            //  EV << "RRRNG send to server_gate :"<< 1 << endl;
             send(job, "jobOut", 1);
             // set server_1 occupied
             occupied_servers_ |= 0x02;
         }
-        EV << "RRRNG num occupied_servers_ after send:"<< occupied_servers_<<" QLEN now is:"<< jobsQueue_.getLength() << endl;
+        //  EV << "RRRNG num occupied_servers_ after send:"<< occupied_servers_<<" QLEN now is:"<< jobsQueue_.getLength() << endl;
 
         // now there is at-the-least another server still free !!!
         // try sending another job !!
         if( (occupied_servers_ != servers_bits) && (jobsQueue_.getLength() > 0) ){
-            EV << "RRRNG double down ; occupied_servers_ is :"<< occupied_servers_ << endl;
+            //  EV << "RRRNG double down ; occupied_servers_ is :"<< occupied_servers_ << endl;
             trySendJobFromQueue();
         }
         return;
     } 
     else 
     {
-        EV << "NORMAL num occupied_servers_ before send:"<< occupied_servers_ << endl;
+        //  EV << "NORMAL num occupied_servers_ before send:"<< occupied_servers_ << endl;
         // occupied_servers_ == 1 or 2
         // server_0 has the bit 0, and is sole occupied on 1
         // server_1 has the bit 1, and is sole occupied on 2
@@ -211,7 +231,7 @@ void Queuer::handleSendJobToServer(Job*job){
         int gate_to_send_to = bit_to_send_to -1;
 
         //  EV << "NORMAL value of server_bits : :"<< servers_bits << endl;
-        EV << "NORMAL send to server_gate :"<< gate_to_send_to << endl;
+        //  EV << "NORMAL send to server_gate :"<< gate_to_send_to << endl;
 
         if(gate_to_send_to < 0){
             EV << "BAD : about to send to negative gate" << endl;
@@ -229,10 +249,11 @@ void Queuer::handleSendJobToServer(Job*job){
         // !!!!!!   UPDATE OCCUPIED GATE !!!!!!!!!!!!
         // we are in 1 or 2, so now all are occupied !: 3
         occupied_servers_ |= bit_to_send_to;
-        EV << "NORMAL num occupied_servers_ after send:"<< occupied_servers_ << endl;
+        //  EV << "NORMAL num occupied_servers_ after send:"<< occupied_servers_ << endl;
 
         if( (occupied_servers_ != servers_bits) && (jobsQueue_.getLength() > 0) ){
             // there is at-the-least another server still free!
+            // should not happen if num_servers == 2 or less ... (we have 2)
             EV << "SHOULD_NOT_BE_HERE num occupied_servers_ after send:"<< occupied_servers_ << endl;
             EV << "SHOULD_NOT_BE_HERE : current QueueLen is:" << jobsQueue_.getLength() << endl;
             EV << "SHOULD_NOT_BE_HERE : occupied_servers_ :"<< occupied_servers_ << endl;

@@ -37,7 +37,7 @@ void Server::initialize()
     //  signalDone_ = new cMessage("jobDone");
 
     //  servTimer_ = new cMessage("serviceDoneTimer");
-    recvJobSignal_ = registerSignal("recvJobSignal");
+    //  recvJobSignal_ = registerSignal("recvJobSignal");
     completedJobSignal_ = registerSignal("completedJobSignal");
 }
 
@@ -51,7 +51,10 @@ void Server::handleMessage(cMessage *msg)
             // it's the timer to finish the job
             //  handleCompleteJob( msg );
             //  EV << "SRV Completed job in server" << endl;
-            emit(completedJobSignal_,1);
+
+            // signal of <working time in server>
+            simtime_t exit_time = simTime() - job->getTimestamp();
+            emit(completedJobSignal_, exit_time);
             // send job to SINK to die
             job->setKind(jobOutServerToSink);
             send(job, "jobOut");
@@ -68,9 +71,11 @@ void Server::handleMessage(cMessage *msg)
         //  the queue is aware that the server is now occupied, 
         //  and will not send more jobs till we say we are free
         if(job->getKind() == jobOutQueueToServer){
-            EV << "SRV Received job from the Queuer" << endl;
-            emit(recvJobSignal_,1);
+            //  EV << "SRV Received job from the Queuer" << endl;
+            //  emit(recvJobSignal_,1);
 
+            // istante di ricezione
+            job->setTimestamp();
             job->setKind(jobWaitOutServer);
 
             // prepare RV SERVICE TIME

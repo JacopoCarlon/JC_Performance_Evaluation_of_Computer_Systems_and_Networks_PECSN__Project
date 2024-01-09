@@ -28,7 +28,7 @@ void Sink::initialize()
 void Sink::handleMessage(cMessage *msg)
 {
     // type is jobOutServerToSink
-    EV << "Received job from the server" << endl;
+    EV << "Received job from the server, killing" << endl;
     emit(recvJobSignal_,1);
     Job* jobToKill = check_and_cast<Job*>(msg);
     delete jobToKill;
