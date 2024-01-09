@@ -19,6 +19,22 @@
 **/**.exe
 
 
+**failed_**
 
-# for now ignore results :
-**/results/**
+
+**/__pycache__/**
+
+**/csvs_folder/**
+**.cmdenv-log
+**.anf
+**/marks/**
+**/nicks/**
+
+**/**.sca
+**/**.vci
+**/**.vec
+
+**/extracted_vectors/**
+
+# for now ignore <completes>
+**/completes/**
