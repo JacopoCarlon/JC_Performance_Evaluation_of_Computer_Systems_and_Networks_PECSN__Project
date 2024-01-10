@@ -39,6 +39,8 @@ void Server::initialize()
     //  servTimer_ = new cMessage("serviceDoneTimer");
     //  recvJobSignal_ = registerSignal("recvJobSignal");
     completedJobSignal_ = registerSignal("completedJobSignal");
+    is_exp_ = par("useExp").boolValue();
+
 }
 
 void Server::handleMessage(cMessage *msg)
@@ -54,6 +56,7 @@ void Server::handleMessage(cMessage *msg)
 
             // signal of <working time in server>
             simtime_t exit_time = simTime() - job->getTimestamp();
+            // if i don't set here, this is the RESPONSE TIME of the job :-) >_<
             emit(completedJobSignal_, exit_time);
             // send job to SINK to die
             job->setKind(jobOutServerToSink);
@@ -75,17 +78,27 @@ void Server::handleMessage(cMessage *msg)
             //  emit(recvJobSignal_,1);
 
             // istante di ricezione
-            job->setTimestamp();
+            //  job->setTimestamp();
             job->setKind(jobWaitOutServer);
 
             // prepare RV SERVICE TIME
             simtime_t time_service = job->getTso();
 
             int slowerness = par("slowness_multiplier");
+            int rng_index = 1;
+            
             if(slowerness > 1){
+                // this is server 2
                 time_service = time_service*slowerness;
+                rng_index = 2;
             }
-            scheduleAt(simTime() + time_service, msg);
+            
+            if(is_exp_){
+                scheduleAt(simTime() + exponential(time_service, rng_index), msg);
+            }else{
+                scheduleAt(simTime() + time_service, msg);
+            }
+
             //  delete msg; 
             //  scheduleAt(simTime() + serTim, servTimer_);
             return;

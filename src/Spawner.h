@@ -28,7 +28,7 @@ class Spawner : public cSimpleModule
 {
     cMessage* timer_;
     //  simtime_t jobExitedSig_;
-
+    bool is_exp_;  // use exponential or constant times
     //  void scheduleNext(cMessage* timer);
 
   public:

@@ -30,7 +30,8 @@ class Server : public cSimpleModule
 
     //  simsignal_t recvJobSignal_;
     simsignal_t completedJobSignal_;
-
+    bool is_exp_;  // use exponential or constant times
+    
   public:
     //  Server();
     //  ~Server();

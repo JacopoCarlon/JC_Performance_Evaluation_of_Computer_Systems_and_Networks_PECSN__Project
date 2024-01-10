@@ -17,7 +17,7 @@
 
 **/**_dbg.exe
 **/**.exe
-
+**/**.h5
 
 **failed_**
 
@@ -38,3 +38,5 @@
 
 # for now ignore <completes>
 **/completes/**
+**/**.png
+**/**.csv

@@ -40,8 +40,13 @@ void Spawner::initialize()
     simtime_t tn = par("tn");
     //  jobExitedSig_ = registerSignal("exited");
 
+    is_exp_ = par("useExp").boolValue();
 
-    scheduleAt(simTime() + tn, timer_); 
+    if(is_exp_){
+        scheduleAt(simTime() + exponential(tn, 0), timer_);
+    }else{
+        scheduleAt(simTime() + tn, timer_);
+    }
     // -> after some time, sends a message which will be managed by handleMessage
 }
 
@@ -74,7 +79,12 @@ void Spawner::handleNewSpawn()
     send(newJob, "jobOut");
 
     simtime_t tn = par("tn");           // exp or uni
-    scheduleAt(simTime() + tn, timer_);
+
+    if(is_exp_){
+        scheduleAt(simTime() + exponential(tn, 0), timer_);
+    }else{
+        scheduleAt(simTime() + tn, timer_);
+    }
 }
 
 

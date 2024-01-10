@@ -22,6 +22,7 @@ simple Queuer
 
         int probVal = default(50);
         int probMax = default(100);
+        bool useExp = default(true);
 
         // used
         @signal[jqtime];

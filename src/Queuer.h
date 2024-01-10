@@ -39,6 +39,7 @@ class Queuer : public cSimpleModule
 
     int pRange_;  // probability max value
     int pVal_;    // probability limes value, in range [0, pRange_]
+    bool is_exp_;  // use exponential or constant times
 
     // default all free : 0 == [00]
     // if S_0 occupied  : 1 == [01]

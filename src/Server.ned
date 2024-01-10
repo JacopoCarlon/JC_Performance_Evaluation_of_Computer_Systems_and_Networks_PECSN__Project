@@ -21,12 +21,14 @@ simple Server
     parameters:
         
         int slowness_multiplier = default(1);
+        bool useExp = default(true);
         
         //  @signal[recvJobSignal];
         //  @statistic[recvJob](source="recvJobSignal"; record=sum,vector);
 
+        // response time
         @signal[completedJobSignal];
-        @statistic[completedJob](title="Time completion job"; source="completedJobSignal"; record=sum,vector);
+        @statistic[completedJob](title="Time completion job"; source="completedJobSignal"; record=sum,mean,vector);
         
     gates: 
         input jobIn;

@@ -45,6 +45,7 @@ void Queuer::initialize()
     
     pVal_ = par("probVal").intValue();
     pRange_ = par("probMax").intValue();
+    is_exp_ = par("useExp").boolValue();
     
 }
 
@@ -177,7 +178,12 @@ bool Queuer::trySendJobFromQueue(){
 
     // time required to leave queue and reach server
     // default is 0
-    scheduleAt(simTime() + job->getTqosi(), job);
+
+    if(is_exp_){
+        scheduleAt(simTime() + exponential(job->getTqosi(), 0), job);
+    }else{
+        scheduleAt(simTime() + job->getTqosi(), job);
+    }
 
     return true;
 }
@@ -193,7 +199,7 @@ void Queuer::handleSendJobToServer(Job*job){
         //  EV << "RRRNG num occupied_servers_ before send:"<< occupied_servers_ << endl;
 
         // entrambi gate liberi
-        int this_rnd_val = uniform(0, pRange_);
+        int this_rnd_val = uniform(0, pRange_, 3);
         
         // this part is hardcoded for 2 servers for now
         if( this_rnd_val < pVal_ ){

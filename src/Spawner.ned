@@ -24,6 +24,8 @@ simple Spawner
         volatile double tqosi @unit(s) = default(0min);     // time elaboration in queue
         volatile double tso @unit(s) = default(1min);       // time needed for service
 
+        bool useExp = default(true);
+
         //  //  double maxGenerationTime @unit(s) = default(3s);
         //  //  double vMax = default(100);
         //  //  generate random value for assignment to Server_0 or Server_1, in range [0, vMax]
