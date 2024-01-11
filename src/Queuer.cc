@@ -33,7 +33,8 @@ void Queuer::initialize()
 
     lastSeen_= 0;
     is_first = true;
-
+    
+    //  (1<<n) -1
     for(int i = 0; i< max_servers; i++){
         servers_bits |= (1<<i);
     }
@@ -66,8 +67,12 @@ void Queuer::handleMessage(cMessage *msg)
         Job* job = check_and_cast<Job*>(msg);     
         if(msg->isSelfMessage()) 
         {
+            // is from SELF
             if(job->getKind() == jobWaitOutQueue){
                 handleSendJobToServer(job);
+            }else{
+                EV << "BAD : getKind SELF " << endl;
+                abort();
             }
             return;
         } 
@@ -75,6 +80,7 @@ void Queuer::handleMessage(cMessage *msg)
         {
             cGate *arrivalGate = msg->getArrivalGate();
             if(arrivalGate == gate("jobIn")){
+                // this is a NEW JOB from SPAWNER
                 // type is jobOutSpawnerToQueue : a new job
                 if(job->getKind() == jobOutSpawnerToQueue){
                     // PUSH it in queue
@@ -99,7 +105,8 @@ void Queuer::handleMessage(cMessage *msg)
                     delete job;
 
                     //  EV << "CTRL num occupied_servers_ :"<< occupied_servers_ << endl;
-                    //  EV << "CTRL server_who_sent_IMFREE :"<< src_gate << endl;
+                    EV << "CTRL server_who_sent_IMFREE :"<< src_gate << endl;
+                    EV << "CTRL : QueueLen is :"<< jobsQueue_.getLength() << endl;
                     //  EV << "num bit_gate :"<< value_saved << endl;
                     // if server was already free, something bad happened
                     if ( !(occupied_servers_ & value_saved) ){
@@ -179,11 +186,16 @@ bool Queuer::trySendJobFromQueue(){
     // time required to leave queue and reach server
     // default is 0
 
-    if(is_exp_){
-        scheduleAt(simTime() + exponential(job->getTqosi(), 0), job);
-    }else{
-        scheduleAt(simTime() + job->getTqosi(), job);
-    }
+    //  if (job->getTqosi() != 0){
+    //      if(is_exp_){
+    //          scheduleAt(simTime() + exponential(job->getTqosi(), 0), job);
+    //      }else{
+    //          scheduleAt(simTime() + job->getTqosi(), job);
+    //      }
+    //  }else{
+    //      scheduleAt(simTime() + 0, job);
+    //  }
+    handleSendJobToServer(job);
 
     return true;
 }
@@ -193,7 +205,9 @@ bool Queuer::trySendJobFromQueue(){
 void Queuer::handleSendJobToServer(Job*job){
     
     job->setKind(jobOutQueueToServer);
-
+    if(occupied_servers_ == servers_bits){
+        EV << "WHYYYYYYy:  : " << occupied_servers_ << endl;
+    }
     if(occupied_servers_ == 0)
     {
         //  EV << "RRRNG num occupied_servers_ before send:"<< occupied_servers_ << endl;
@@ -220,6 +234,8 @@ void Queuer::handleSendJobToServer(Job*job){
         // try sending another job !!
         if( (occupied_servers_ != servers_bits) && (jobsQueue_.getLength() > 0) ){
             //  EV << "RRRNG double down ; occupied_servers_ is :"<< occupied_servers_ << endl;
+            EV << "RNG tries to double send, but we should never be here" << endl;
+            abort();
             trySendJobFromQueue();
         }
         return;
@@ -248,7 +264,7 @@ void Queuer::handleSendJobToServer(Job*job){
             EV << "BAD : gate_to_send_to :"<< gate_to_send_to << endl;
             // i want it to crash so i can read
             //send(job, "jobOut", gate_to_send_to);
-            return;
+            abort();
         }
         send(job, "jobOut", gate_to_send_to);
 

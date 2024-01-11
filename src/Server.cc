@@ -92,7 +92,8 @@ void Server::handleMessage(cMessage *msg)
                 time_service = time_service*slowerness;
                 rng_index = 2;
             }
-            
+            EV << "server with slowerness : " << slowerness << " ; elaboration_time : " << time_service << endl;
+
             if(is_exp_){
                 scheduleAt(simTime() + exponential(time_service, rng_index), msg);
             }else{
