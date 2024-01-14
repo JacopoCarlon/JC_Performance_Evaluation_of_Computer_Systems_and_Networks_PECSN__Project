@@ -53,6 +53,12 @@ void Spawner::initialize()
 
 void Spawner::handleMessage(cMessage *msg)
 {
+    bool degen = true;
+    if(degen){
+        if (getSimulation()->getEventNumber() > 20000000) {
+            endSimulation();
+        }
+    }
     if(msg->isSelfMessage()){
         // here there could be a delay between spawning and entering queue <tqi>, 
         // but we keep it zero .
