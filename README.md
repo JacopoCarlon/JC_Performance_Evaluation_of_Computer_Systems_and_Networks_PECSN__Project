@@ -5,8 +5,8 @@ Individual project for PECSN exam at University of Pisa, year 2023-2024
 ## Author :
 - [Jacopo Carlon](https://github.com/JacopoCarlon) 
 
-## Professors :
-- [Giovanni Stea]
+## Professors and assistants :
+- [Giovanni Stea] : Prof. PECSN
 - [Giovanni Nardini]
 
 ## Course material by Professor Giovanni Stea :
